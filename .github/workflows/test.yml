@@ -1,0 +1,25 @@
+name: API workflow
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Test python API
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-python@v2
+      with:
+        python-version: '3.13'
+    - name: Install requirements
+      run: pip install uv
+    - name: Init venv
+      run: uv venv
+    - name: Sync requirements
+      run: uv sync
+    - name: Run tests and collect coverage
+      run: uv run pytest
+    - name: Upload coverage reports to Codecov with GitHub Action
+      uses: codecov/codecov-action@v5
+      env:
+        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
