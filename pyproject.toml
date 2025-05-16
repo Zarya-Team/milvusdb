@@ -1,0 +1,98 @@
+[project]
+name = "milvusdb"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Ryibalchenko.NV", email = "Ryibalchenko.NV@dns-shop.ru" }
+]
+requires-python = ">=3.13"
+dependencies = [
+    "loguru>=0.7.3",
+    "pymilvus>=2.5.8",
+    "sqlglot[rs]>=26.17.1",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[dependency-groups]
+dev = [
+    "flake8>=7.2.0",
+    "poethepoet>=0.34.0",
+    "pydocstyle>=6.3.0",
+    "pyright>=1.1.400",
+    "pytest>=8.3.5",
+    "pytest-cov>=6.1.1",
+    "pytest-randomly>=3.16.0",
+    "ruff>=0.11.8",
+    "wemake-python-styleguide>=1.1.0",
+]
+
+[tool.ruff]
+line-length = 79
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = [
+    "A", "B", "F", "I", "Q", "ASYNC", "N", "W", "UP",
+    "T20", "SIM", "ANN", "PL", "PT", "RET", "E", "S",
+    "C4", "EM", "DTZ", "RUF", "TCH", "ARG"
+]
+
+[tool.pydocstyle]
+convention = "google"
+
+[tool.pyright]
+include = ["src", "tests"]
+pythonVersion = "3.13"
+
+[tool.poe.tasks]
+format = [
+    {cmd = "uv run ruff check --fix"},
+    {cmd = "uv run ruff format"},
+    {cmd = "uv run flake8 src --select=WPS --ignore=WPS412,WPS115,WPS410,WPS431,WPS117,WPS226"},
+]
+lint = [
+    {cmd = "uv run ruff check"},
+    {cmd = "uv run ruff format --check"},
+    {cmd = "uv run pyright"},
+    {ref = "lint-docs"},
+]
+lint-docs = "uv run pydocstyle --ignore-decorators=overload"
+test = "uv run pytest"
+precommit.sequence= [
+    "format",
+    "lint",
+    "lint-docs",
+    "test",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = [
+    "--cov=src",
+    "--cov-branch",
+    "--cov-report=term:skip-covered",
+    "--cov-report=xml",
+]
+
+[tool.coverage.run]
+source = ["src"]
+omit = [
+    "*/__init__.py",
+]
+branch = true
+concurrency = ["thread"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "@abstractmethod",
+    "@abc.abstractmethod",
+    "TYPE_CHECKING",
+    "pragma: no cover",
+    "raise NotImplementedError",
+]
+fail_under = 0
+show_missing = true

@@ -1,0 +1,1 @@
+[![codecov](https://codecov.io/gl/zarya-team/milvusdb/graph/badge.svg?token=EYMEDOSO59)](https://codecov.io/gl/zarya-team/milvusdb)
